@@ -37,17 +37,6 @@ def pull(base_url, client_id, client_secret):
 		click.echo('Successfully connected to Looker instance: {}'.format(base_url))
 	else:
 		click.echo('Unable to connect to Looker instance: {}'.format(base_url))
-	
-	# click.echo(conn.get_model_sets())	
-	# click.echo(conn.get_permission_sets())	
-	# click.echo(conn.get_roles())	
-	# click.echo(conn.get_role_users(2))
-	# click.echo(conn.get_role_groups(8))
-	# click.echo(conn.get_groups())
-	# click.echo(conn.get_group_groups(1))
-	# click.echo(conn.get_group_users(11))
-
-	# click.echo(prep_looker_config_for_log(get_looker_config(conn)))
 
 	log_looker_config_file(conn)
 
