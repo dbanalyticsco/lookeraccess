@@ -1,4 +1,4 @@
-
+import yaml
 
 def compose_url(urlbase, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
     """
@@ -31,3 +31,11 @@ def filter_list(items, keys):
         output.append(new_item)
 
     return output
+
+def read_yaml_file_from_path(self, path):
+    with open(path, 'r') as stream:
+        try:
+            config = yaml.load(stream)
+            return config
+        except yaml.YAMLError as exc:
+            print(exc)

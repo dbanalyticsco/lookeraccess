@@ -96,7 +96,13 @@ class LookerConnection:
         response = self._get('roles')
         keys = ['id','name','permission_set','model_set']
 
-        return filter_list(response, keys)
+        filtered = filter_list(response, keys)
+
+        for item in filtered:
+            item['permission_set'] = { key: item['permission_set'][key] for key in ['id','name'] }
+            item['model_set'] = { key: item['model_set'][key] for key in ['id','name'] }
+
+        return filtered
 
     def get_role_users(self, role_id):
 
@@ -112,11 +118,24 @@ class LookerConnection:
 
         return filter_list(response, keys)
 
+    def get_groups(self):
 
+        response = self._get('groups')
+        keys = ['id','name']
 
+        return filter_list(response, keys)
 
+    def get_group_groups(self, group_id):
 
+        response = self._get('groups', group_id, 'groups')
+        keys = ['id','name']
 
+        return filter_list(response, keys)
 
+    def get_group_users(self, group_id):
 
+        response = self._get('groups', group_id, 'users')
+        keys = ['id','email']
+
+        return filter_list(response, keys)
 

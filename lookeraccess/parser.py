@@ -1,30 +1,85 @@
 import yaml
 
-class Config:
+def get_looker_config(conn):
 
-    def __init__(self, path):
-        self.raw=self.read_from_path(path)
-        self.groups = self.raw['groups']
-        self.users = self.raw['users']
-        self.roles = self.raw['roles']
-        self.permissionsets = self.raw['permissionsets']
-        self.modelsets = self.raw['modelsets']
+    config = {}
 
-    def __repr__(self):
-        return "Config with {} users, {} groups, {} roles, {} permission sets and {} model sets.".format(
-            len(self.users),
-            len(self.groups),
-            len(self.roles),
-            len(self.permissionsets),
-            len(self.modelsets)
-            )
+    config['permission_sets'] = conn.get_permission_sets()
+    config['model_sets'] = conn.get_model_sets()
+    config['roles'] = enrich_roles(conn.get_roles(), conn)
+    config['groups'] = enrich_groups(conn.get_groups(), conn)
+
+    return config
+
+def enrich_roles(roles, conn):
+
+    for item in roles:
+        item['groups'] = conn.get_role_groups(item['id'])
+        item['users'] = conn.get_role_users(item['id'])
+
+    return roles
+
+def enrich_groups(groups, conn):
+
+    for item in groups:
+        item['groups'] = conn.get_group_groups(item['id'])
+        item['users'] = conn.get_group_users(item['id'])
+
+    return groups
+
+def prep_looker_config_for_log(config):
+
+    config['permission_sets'] = [item for item in config['permission_sets'] if item['name'] != 'Admin']
+    config['model_sets'] = [item for item in config['model_sets'] if item['name'] != 'All']
+    config['groups'] = [item for item in config['groups'] if item['name'] != 'All Users']
+
+    for key in ['permission_sets','model_sets']:
+        for item in config[key]:
+            item.pop('id')
+
+    for group in config['groups']:
+        group.pop('id')
+        group_users = []
+        group_groups = []
+        for item in group['groups']:
+            group_groups.append(item['name'])
+        for item in group['users']:
+            group_users.append(item['email'])
+        group_groups.sort()
+        group_users.sort()
+        group['groups'] = group_groups
+        group['users'] = group_users
+
+    for role in config['roles']:
+        role.pop('id')
+        role['permission_set'] = role['permission_set']['name']
+        role['model_set'] = role['model_set']['name']
+        
+        role_users = []
+        role_groups = []
+        for item in role['groups']:
+            role_groups.append(item['name'])
+        for item in role['users']:
+            if item['email']:
+                role_users.append(item['email'])
+        role_groups.sort()
+        role_users.sort()
+        role['groups'] = role_groups
+        role['users'] = role_users
+
+    return config
+
+def log_looker_config_file(conn):
+
+    config = get_looker_config(conn)
+    prepped = prep_looker_config_for_log(config)
+
+    for key in prepped.keys():
+
+        with open('{}.yml'.format(key),'w') as yaml_file:
+            yaml.dump({key: prepped[key]}, yaml_file, default_flow_style=False)
 
 
-    def read_from_path(self, path):
-        with open(path, 'r') as stream:
-            try:
-                config = yaml.load(stream)
-                return config
-            except yaml.YAMLError as exc:
-                print(exc)
+
+
 
