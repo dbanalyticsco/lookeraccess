@@ -1,0 +1,33 @@
+groups:
+  - name: group_one
+    users:
+      - user_one
+      - user_one
+    groups: 
+      - group_two
+
+  - name: group_two
+    users: 
+      - user_three
+
+users:
+  - name: dylang.baker@googlemail.com
+    first_name: Dylan
+    last_name: Baker
+
+roles:
+  - name: non_admin
+    permissionset: psone
+    modelset: msone
+
+modelsets:
+  - name: msone
+    models:
+      - modelone
+      - modeltwo
+
+permissionsets:
+  - name: psone
+    permissions:
+      - permissionone
+      - permissiontwo
