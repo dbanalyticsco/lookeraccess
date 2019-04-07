@@ -38,7 +38,7 @@ def pull(base_url, client_id, client_secret):
 	else:
 		click.echo('Unable to connect to Looker instance: {}'.format(base_url))
 
-	log_looker_config_file(conn)
+	log_looker_config_file(conn, pull=True)
 
 
 cli.add_command(hello)
