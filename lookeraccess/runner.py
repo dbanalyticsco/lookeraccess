@@ -3,14 +3,11 @@ from connection import LookerConnection
 from utils import compose_url
 from parser import log_looker_config_file
 from loader import load_config_files
+from validator import validate_config
 
 @click.group()
 def cli():
 	pass
-
-@click.command()
-def hello():
-	click.echo('Hello. This is a test.')
 
 @click.command()
 @click.argument('base_url')
@@ -42,13 +39,15 @@ def pull(base_url, client_id, client_secret):
 	log_looker_config_file(conn, pull=True)
 
 @click.command()
-def validate():
-
-	files = load_config_files()
+@click.argument('base_url')
+@click.argument('client_id')
+@click.argument('client_secret')
+def validate(base_url, client_id, client_secret):
 	
+	conn = LookerConnection(client_id, client_secret, base_url)
+	config = load_config_files()
+	validate_config(config, conn)
 
-
-cli.add_command(hello)
 cli.add_command(connect)
 cli.add_command(pull)
 cli.add_command(validate)

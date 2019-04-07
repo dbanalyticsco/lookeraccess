@@ -1,6 +1,11 @@
 import glob 
 import yaml 
 
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
+
 def get_config_files():
 
 	files = glob.glob('*.yml')
@@ -18,7 +23,7 @@ def load_config_files():
 
 	for file in files:
 		with open(file, 'r') as stream:
-			data = yaml.load(stream)
+			data = yaml.load(stream, Loader=Loader)
 
 			for key in data.keys():
 				if key in output:
