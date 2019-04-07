@@ -10,9 +10,9 @@ def cli():
 	pass
 
 @click.command()
-@click.argument('base_url')
-@click.argument('client_id')
-@click.argument('client_secret')
+@click.argument('base_url', envvar='LOOKER_BASE_URL')
+@click.argument('client_id', envvar='LOOKER_CLIENT_ID')
+@click.argument('client_secret', envvar='LOOKER_CLIENT_SECRET')
 def connect(base_url, client_id, client_secret):
 	
 	conn = LookerConnection(client_id, client_secret, base_url)
@@ -24,9 +24,9 @@ def connect(base_url, client_id, client_secret):
 
 
 @click.command()
-@click.argument('base_url')
-@click.argument('client_id')
-@click.argument('client_secret')
+@click.argument('base_url', envvar='LOOKER_BASE_URL')
+@click.argument('client_id', envvar='LOOKER_CLIENT_ID')
+@click.argument('client_secret', envvar='LOOKER_CLIENT_SECRET')
 def pull(base_url, client_id, client_secret):
 	
 	conn = LookerConnection(client_id, client_secret, base_url)
@@ -39,9 +39,9 @@ def pull(base_url, client_id, client_secret):
 	log_looker_config_file(conn, pull=True)
 
 @click.command()
-@click.argument('base_url')
-@click.argument('client_id')
-@click.argument('client_secret')
+@click.argument('base_url', envvar='LOOKER_BASE_URL')
+@click.argument('client_id', envvar='LOOKER_CLIENT_ID')
+@click.argument('client_secret', envvar='LOOKER_CLIENT_SECRET')
 def validate(base_url, client_id, client_secret):
 	
 	conn = LookerConnection(client_id, client_secret, base_url)
