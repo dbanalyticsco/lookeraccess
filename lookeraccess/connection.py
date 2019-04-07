@@ -91,6 +91,28 @@ class LookerConnection:
 
         return filter_list(response, keys)
 
+    def get_all_permissions(self):
+
+        response = self._get('permissions')
+        keys = ['permission']
+
+        return filter_list(response, keys)
+
+    def get_all_models(self):
+
+        response = self._get('lookml_models')
+        keys = ['name']
+
+        return filter_list(response, keys)
+
+    def get_all_users(self):
+
+        response = self._get('users')
+        keys = ['email']
+
+        return filter_list(response, keys)
+
+
     def get_roles(self):
 
         response = self._get('roles')

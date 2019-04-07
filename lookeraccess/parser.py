@@ -2,6 +2,11 @@ import yaml
 from datetime import datetime
 import os
 
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
+
 def get_looker_config(conn):
 
     config = {}
@@ -87,7 +92,7 @@ def log_looker_config_file(conn, pull=False):
     for key in prepped.keys():
 
         with open('{}{}.yml'.format(directory,key),'w') as yaml_file:
-            yaml.dump({key: prepped[key]}, yaml_file, default_flow_style=False)
+            yaml.dump({key: prepped[key]}, yaml_file, default_flow_style=False, Dumper=Dumper)
 
 
 
