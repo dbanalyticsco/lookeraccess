@@ -10,11 +10,6 @@ groups:
     users: 
       - user_three
 
-users:
-  - name: dylang.baker@googlemail.com
-    first_name: Dylan
-    last_name: Baker
-
 roles:
   - name: non_admin
     permissionset: psone
