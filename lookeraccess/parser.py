@@ -1,4 +1,6 @@
 import yaml
+from datetime import datetime
+import os
 
 def get_looker_config(conn):
 
@@ -69,14 +71,22 @@ def prep_looker_config_for_log(config):
 
     return config
 
-def log_looker_config_file(conn):
+def log_looker_config_file(conn, pull=False):
 
     config = get_looker_config(conn)
     prepped = prep_looker_config_for_log(config)
 
+    if not pull:
+        if not os.path.exists('logs'):
+            os.makedirs('logs')
+        directory = 'logs/{}/'.format(datetime.now().strftime("%Y%m%d-%H%M%S"))
+        os.makedirs(directory)
+    else:
+        directory = ''
+
     for key in prepped.keys():
 
-        with open('{}.yml'.format(key),'w') as yaml_file:
+        with open('{}{}.yml'.format(directory,key),'w') as yaml_file:
             yaml.dump({key: prepped[key]}, yaml_file, default_flow_style=False)
 
 
