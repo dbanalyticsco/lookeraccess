@@ -1,7 +1,8 @@
 import click
 from connection import LookerConnection
 from utils import compose_url
-from parser import get_looker_config, prep_looker_config_for_log, log_looker_config_file
+from parser import log_looker_config_file
+from loader import load_config_files
 
 @click.group()
 def cli():
@@ -40,10 +41,17 @@ def pull(base_url, client_id, client_secret):
 
 	log_looker_config_file(conn, pull=True)
 
+@click.command()
+def validate():
+
+	files = load_config_files()
+	
+
 
 cli.add_command(hello)
 cli.add_command(connect)
 cli.add_command(pull)
+cli.add_command(validate)
 
 if __name__ == '__main__':
 	cli()

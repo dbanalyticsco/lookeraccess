@@ -27,3 +27,8 @@ coverage.xml
 
 
 .DS_Store
+
+permission_sets.yml
+groups.yml
+model_sets.yml
+roles.yml
