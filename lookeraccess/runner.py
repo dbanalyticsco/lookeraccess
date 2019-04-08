@@ -1,9 +1,10 @@
 import click
 from connection import LookerConnection
 from utils import compose_url
-from parser import log_looker_config_file
+from parser import log_looker_config_file, get_clean_looker_config
 from loader import load_config_files
 from validator import validate_config
+from comparer import find_changes
 
 @click.group()
 def cli():
@@ -30,12 +31,6 @@ def connect(base_url, client_id, client_secret):
 def pull(base_url, client_id, client_secret):
 	
 	conn = LookerConnection(client_id, client_secret, base_url)
-
-	if conn.headers:
-		click.echo('Successfully connected to Looker instance: {}'.format(base_url))
-	else:
-		click.echo('Unable to connect to Looker instance: {}'.format(base_url))
-
 	log_looker_config_file(conn, pull=True)
 
 @click.command()
@@ -48,9 +43,21 @@ def validate(base_url, client_id, client_secret):
 	config = load_config_files()
 	validate_config(config, conn)
 
+@click.command()
+@click.argument('base_url', envvar='LOOKER_BASE_URL')
+@click.argument('client_id', envvar='LOOKER_CLIENT_ID')
+@click.argument('client_secret', envvar='LOOKER_CLIENT_SECRET')
+def changes(base_url, client_id, client_secret):
+	
+	conn = LookerConnection(client_id, client_secret, base_url)
+	new_config = load_config_files()
+	looker_config = get_clean_looker_config(conn)
+	click.echo(find_changes(looker_config, new_config))
+
 cli.add_command(connect)
 cli.add_command(pull)
 cli.add_command(validate)
+cli.add_command(changes)
 
 if __name__ == '__main__':
 	cli()

@@ -34,7 +34,7 @@ def enrich_groups(groups, conn):
 
     return groups
 
-def prep_looker_config_for_log(config):
+def clean_looker_config(config):
 
     config['permission_sets'] = [item for item in config['permission_sets'] if item['name'] != 'Admin']
     config['model_sets'] = [item for item in config['model_sets'] if item['name'] != 'All']
@@ -54,8 +54,16 @@ def prep_looker_config_for_log(config):
             group_users.append(item['email'])
         group_groups.sort()
         group_users.sort()
-        group['groups'] = group_groups
-        group['users'] = group_users
+
+        if group_groups == []:
+            group.pop('groups')
+        else: 
+            group['groups'] = group_groups
+
+        if group_users == []:
+            group.pop('users')
+        else:
+            group['users'] = group_users
 
     for role in config['roles']:
         role.pop('id')
@@ -71,15 +79,29 @@ def prep_looker_config_for_log(config):
                 role_users.append(item['email'])
         role_groups.sort()
         role_users.sort()
-        role['groups'] = role_groups
-        role['users'] = role_users
+
+        if role_groups == []:
+            role.pop('groups')
+        else: 
+            role['groups'] = role_groups
+
+        if role_users == []:
+            role.pop('users')
+        else:
+            role['users'] = role_users
 
     return config
 
-def log_looker_config_file(conn, pull=False):
+def get_clean_looker_config(conn):
 
     config = get_looker_config(conn)
-    prepped = prep_looker_config_for_log(config)
+    clean = clean_looker_config(config)
+
+    return clean
+
+def log_looker_config_file(conn, pull=False):
+
+    prepped = get_clean_looker_config(conn)
 
     if not pull:
         if not os.path.exists('logs'):
