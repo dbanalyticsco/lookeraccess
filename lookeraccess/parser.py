@@ -11,16 +11,22 @@ def get_looker_config(conn):
 
     config = {}
 
+    print('Getting Permission Sets.')
     config['permission_sets'] = conn.get_permission_sets()
+    print('Getting Model Sets.')
     config['model_sets'] = conn.get_model_sets()
+    print('Getting Roles.')
     config['roles'] = enrich_roles(conn.get_roles(), conn)
+    print('Getting Groups.')
     config['groups'] = enrich_groups(conn.get_groups(), conn)
 
     return config
 
 def enrich_roles(roles, conn):
 
+    print('Enriching Groups with Groups and Users.')
     for item in roles:
+        print('    Enriching Role: {}'.format(item['name']))
         item['groups'] = conn.get_role_groups(item['id'])
         item['users'] = conn.get_role_users(item['id'])
 
@@ -28,7 +34,9 @@ def enrich_roles(roles, conn):
 
 def enrich_groups(groups, conn):
 
+    print('Enriching Roles with Groups and Users.')
     for item in groups:
+        print('    Enriching Group: {}'.format(item['name']))
         item['groups'] = conn.get_group_groups(item['id'])
         item['users'] = conn.get_group_users(item['id'])
 
@@ -36,6 +44,7 @@ def enrich_groups(groups, conn):
 
 def clean_looker_config(config):
 
+    print('Starting cleaning of Looker configuration.')
     config['permission_sets'] = [item for item in config['permission_sets'] if item['name'] != 'Admin']
     config['model_sets'] = [item for item in config['model_sets'] if item['name'] != 'All']
     config['groups'] = [item for item in config['groups'] if item['name'] != 'All Users']
@@ -89,6 +98,8 @@ def clean_looker_config(config):
             role.pop('users')
         else:
             role['users'] = role_users
+
+    print('Finished Cleaning of Looker configuration.')
 
     return config
 

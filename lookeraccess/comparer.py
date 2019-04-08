@@ -60,9 +60,15 @@ def find_sublist_items_to_remove(looker_config, new_config, item_type, identifie
 
 			item_update_list = []
 
-			for list_element in item[subitem]:
-				if list_element not in new_item[subitem]:
-					item_update_list.append(list_element)
+			if subitem in new_item and subitem in item:
+
+				for list_element in item[subitem]:
+					if list_element not in new_item[subitem]:
+						item_update_list.append(list_element)
+
+			elif subitem not in new_item and subitem in item:
+
+				item_update_list += item[subitem]
 
 			if item_update_list:
 				items_to_update.append({'name': item[identifier], 'item': item_update_list})
@@ -80,11 +86,15 @@ def find_sublist_items_to_add(looker_config, new_config, item_type, identifier, 
 
 			item_update_list = []
 
-			# TODO: What if one of them is empty?
+			if subitem in item and subitem in new_item:
 
-			for list_element in new_item[subitem]:
-				if list_element not in item[subitem]:
-					item_update_list.append(list_element)
+				for list_element in new_item[subitem]:
+					if list_element not in item[subitem]:
+						item_update_list.append(list_element)
+
+			elif subitem not in item and subitem in new_item:
+
+				item_update_list += new_item[subitem]
 
 			if item_update_list:
 				items_to_update.append({'name': new_item[identifier], 'item': item_update_list})
@@ -149,15 +159,27 @@ def find_groups_to_create(looker_config, new_config):
 
 def find_groups_to_update(looker_config, new_config):
 
-	# group_groups_to_add = find_sublist_items_to_add(looker_config, new_config, 'groups', 'name', 'groups')
+	group_groups_to_add = find_sublist_items_to_add(looker_config, new_config, 'groups', 'name', 'groups')
+	group_groups_to_remove = find_sublist_items_to_remove(looker_config, new_config, 'groups', 'name', 'groups')
+	group_users_to_add = find_sublist_items_to_add(looker_config, new_config, 'groups', 'name', 'users')
+	group_users_to_remove = find_sublist_items_to_remove(looker_config, new_config, 'groups', 'name', 'users')
 
-	pass
+	changes = {
+		'groups': {
+			'add': group_groups_to_add,
+			'remove': group_groups_to_remove
+		},
+		'users': {
+			'add': group_users_to_add,
+			'remove': group_users_to_remove
+		}
+	}
 
 def find_group_changes(looker_config, new_config):
 
 	changes = {}
 	changes['delete'] = find_groups_to_delete(looker_config, new_config)
-	# changes['update'] = find_groups_to_update(looker_config, new_config)
+	changes['update'] = find_groups_to_update(looker_config, new_config)
 	changes['create'] = find_groups_to_create(looker_config, new_config)
 
 	return changes
@@ -207,10 +229,10 @@ def find_role_changes(looker_config, new_config):
 def find_changes(looker_config, new_config):
 
 	changes = {}
-	# changes['permission_sets'] = find_permission_set_changes(looker_config, new_config)
-	# changes['model_sets'] = find_model_set_changes(looker_config, new_config)
+	changes['permission_sets'] = find_permission_set_changes(looker_config, new_config)
+	changes['model_sets'] = find_model_set_changes(looker_config, new_config)
 	changes['groups'] = find_group_changes(looker_config, new_config)
-	# changes['roles'] = find_role_changes(looker_config, new_config)
+	changes['roles'] = find_role_changes(looker_config, new_config)
 	
 	return changes
 
