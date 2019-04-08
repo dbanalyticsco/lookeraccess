@@ -39,9 +39,6 @@ def find_items_to_update(looker_config, new_config, item_type, identifier, subit
 				elif subitem in new_item and subitem in item:
 					new_item[subitem].sort()
 					item[subitem].sort()
-					print('{} / {}'.format(item[identifier], subitem))
-					print(new_item[subitem])
-					print(item[subitem])
 					if new_item[subitem] != item[subitem]:
 						items_to_update.append(item[identifier])
 			
@@ -52,11 +49,47 @@ def find_items_to_update(looker_config, new_config, item_type, identifier, subit
 
 	return items_to_update
 
-def find_sublist_items_to_add():
-	pass
+def find_sublist_items_to_remove(looker_config, new_config, item_type, identifier, subitem):
+	
+	new_names = [item[identifier] for item in new_config[item_type]]
+	items_to_update = []
 
-def find_sublist_items_to_remove():
-	pass
+	for item in looker_config[item_type]:
+		if item[identifier] in new_names:
+			new_item = next((e for e in new_config[item_type] if e[identifier] == item[identifier]))
+
+			item_update_list = []
+
+			for list_element in item[subitem]:
+				if list_element not in new_item[subitem]:
+					item_update_list.append(list_element)
+
+			if item_update_list:
+				items_to_update.append({'name': item[identifier], 'item': item_update_list})
+
+	return items_to_update
+
+def find_sublist_items_to_add(looker_config, new_config, item_type, identifier, subitem):
+	
+	names = [item[identifier] for item in looker_config[item_type]]
+	items_to_update = []
+
+	for new_item in new_config[item_type]:
+		if new_item[identifier] in names:
+			item = next((e for e in looker_config[item_type] if e[identifier] == new_item[identifier]))
+
+			item_update_list = []
+
+			# TODO: What if one of them is empty?
+
+			for list_element in new_item[subitem]:
+				if list_element not in item[subitem]:
+					item_update_list.append(list_element)
+
+			if item_update_list:
+				items_to_update.append({'name': new_item[identifier], 'item': item_update_list})
+
+	return items_to_update
 
 # PERMISSION SETS
 
@@ -116,6 +149,8 @@ def find_groups_to_create(looker_config, new_config):
 
 def find_groups_to_update(looker_config, new_config):
 
+	# group_groups_to_add = find_sublist_items_to_add(looker_config, new_config, 'groups', 'name', 'groups')
+
 	pass
 
 def find_group_changes(looker_config, new_config):
@@ -174,8 +209,8 @@ def find_changes(looker_config, new_config):
 	changes = {}
 	# changes['permission_sets'] = find_permission_set_changes(looker_config, new_config)
 	# changes['model_sets'] = find_model_set_changes(looker_config, new_config)
-	# changes['groups'] = find_group_changes(looker_config, new_config)
-	changes['roles'] = find_role_changes(looker_config, new_config)
+	changes['groups'] = find_group_changes(looker_config, new_config)
+	# changes['roles'] = find_role_changes(looker_config, new_config)
 	
 	return changes
 
