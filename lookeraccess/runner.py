@@ -1,10 +1,10 @@
 import click
-from connection import LookerConnection
-from utils import compose_url
-from parser import log_looker_config_file, log_raw_looker_config_file, clean_looker_config, get_looker_config, load_looker_config_from_logs
-from loader import load_config_files
-from validator import validate_config
-from comparer import find_changes
+from lookeraccess.connection import LookerConnection
+from lookeraccess.utils import compose_url
+from lookeraccess.parser import log_looker_config_file, log_raw_looker_config_file, clean_looker_config, get_looker_config, load_looker_config_from_logs
+from lookeraccess.loader import load_config_files
+from lookeraccess.validator import validate_config
+from lookeraccess.comparer import find_changes
 from datetime import datetime
 
 @click.group()

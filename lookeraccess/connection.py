@@ -1,6 +1,6 @@
 import requests
 import logging
-from utils import compose_url, filter_list
+from lookeraccess.utils import compose_url, filter_list
 
 logging.basicConfig(level=logging.INFO)
 
