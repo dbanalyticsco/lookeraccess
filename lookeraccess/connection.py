@@ -6,12 +6,12 @@ logging.basicConfig(level=logging.INFO)
 
 class LookerConnection:
 
-    def __init__(self, client_id, client_secret, url):
+    def __init__(self, client_id, client_secret, url, port=19999):
 
         if url[-1] == '/':
-            self.url = url[:-1] + ':19999/api/3.0/'
+            self.url = '{}:{}/api/3.0/'.format(url[:-1], port)
         else:
-            self.url = url + ':19999/api/3.0/'
+            self.url = '{}:{}/api/3.0/'.format(url, port)
         self.headers = self.connect(client_id, client_secret)
 
     def connect(self, client_id, client_secret):
