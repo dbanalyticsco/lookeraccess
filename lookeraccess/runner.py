@@ -15,9 +15,10 @@ def cli():
 @click.argument('base_url', envvar='LOOKER_BASE_URL')
 @click.argument('client_id', envvar='LOOKER_CLIENT_ID')
 @click.argument('client_secret', envvar='LOOKER_CLIENT_SECRET')
-def connect(base_url, client_id, client_secret):
+@click.option('--port', default=19999)
+def connect(base_url, client_id, client_secret, port):
 	
-	conn = LookerConnection(client_id, client_secret, base_url)
+	conn = LookerConnection(client_id, client_secret, base_url, port)
 
 	if conn.headers:
 		click.echo('Successfully connected to Looker instance: {}'.format(base_url))
@@ -29,10 +30,11 @@ def connect(base_url, client_id, client_secret):
 @click.argument('base_url', envvar='LOOKER_BASE_URL')
 @click.argument('client_id', envvar='LOOKER_CLIENT_ID')
 @click.argument('client_secret', envvar='LOOKER_CLIENT_SECRET')
-def pull(base_url, client_id, client_secret):
+@click.option('--port', default=19999)
+def pull(base_url, client_id, client_secret, port):
 
 	run_time = datetime.now()
-	conn = LookerConnection(client_id, client_secret, base_url)
+	conn = LookerConnection(client_id, client_secret, base_url, port)
 	looker_config_raw = get_looker_config(conn)
 	log_raw_looker_config_file(conn, looker_config_raw, run_time)
 	looker_config = clean_looker_config(looker_config_raw)
@@ -42,9 +44,10 @@ def pull(base_url, client_id, client_secret):
 @click.argument('base_url', envvar='LOOKER_BASE_URL')
 @click.argument('client_id', envvar='LOOKER_CLIENT_ID')
 @click.argument('client_secret', envvar='LOOKER_CLIENT_SECRET')
-def validate(base_url, client_id, client_secret):
+@click.option('--port', default=19999)
+def validate(base_url, client_id, client_secret, port):
 	
-	conn = LookerConnection(client_id, client_secret, base_url)
+	conn = LookerConnection(client_id, client_secret, base_url, port)
 	config = load_config_files()
 	validate_config(config, conn)
 
@@ -52,11 +55,12 @@ def validate(base_url, client_id, client_secret):
 @click.argument('base_url', envvar='LOOKER_BASE_URL')
 @click.argument('client_id', envvar='LOOKER_CLIENT_ID')
 @click.argument('client_secret', envvar='LOOKER_CLIENT_SECRET')
+@click.option('--port', default=19999)
 @click.option('--uselog', is_flag=True)
-def changes(base_url, client_id, client_secret, uselog):
+def changes(base_url, client_id, client_secret, uselog, port):
 
 	run_time = datetime.now()
-	conn = LookerConnection(client_id, client_secret, base_url)
+	conn = LookerConnection(client_id, client_secret, base_url, port)
 	new_config = load_config_files()
 	if uselog:
 		looker_config_raw = load_looker_config_from_logs()
