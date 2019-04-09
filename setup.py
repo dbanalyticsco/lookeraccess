@@ -11,6 +11,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        lookeraccess=lookeraccess.runner:cli
+        lookeraccess=lookeraccess.cli:cli
     ''',
 )
