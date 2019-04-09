@@ -20,7 +20,6 @@ class LookerConnection:
         login = requests.post(
             url=compose_url(self.url, 'login'),
             data={'client_id': client_id, 'client_secret': client_secret})
-        logging.info("Connecting to Looker instance, url: {}".format(login.url))
 
         try:
             access_token = login.json()['access_token']

@@ -175,6 +175,8 @@ def find_groups_to_update(looker_config, new_config):
 		}
 	}
 
+	return changes
+
 def find_group_changes(looker_config, new_config):
 
 	changes = {}
