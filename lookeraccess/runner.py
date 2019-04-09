@@ -62,8 +62,8 @@ def changes(base_url, client_id, client_secret, uselog):
 		looker_config_raw = load_looker_config_from_logs()
 	else:
 		looker_config_raw = get_looker_config(conn)
-	looker_config = clean_looker_config(looker_config_raw)
 	log_raw_looker_config_file(conn, looker_config_raw, run_time)
+	looker_config = clean_looker_config(looker_config_raw)
 	log_looker_config_file(conn, looker_config, run_time)
 	click.echo(find_changes(looker_config, new_config))
 
