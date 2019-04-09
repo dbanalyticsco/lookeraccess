@@ -1,6 +1,7 @@
 import yaml
 from datetime import datetime
 import os
+import json
 
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
@@ -19,6 +20,16 @@ def get_looker_config(conn):
     config['roles'] = enrich_roles(conn.get_roles(), conn)
     print('Getting Groups.')
     config['groups'] = enrich_groups(conn.get_groups(), conn)
+
+    return config
+
+def load_looker_config_from_logs():
+
+    directory = max(os.listdir('./logs'))
+
+    print('Loading Looker config from logs.')
+    with open('logs/{}/config.json'.format(directory), 'r') as document:
+        config = json.load(document)
 
     return config
 
@@ -103,29 +114,40 @@ def clean_looker_config(config):
 
     return config
 
-def get_clean_looker_config(conn):
+def log_looker_config_file(conn, config, run_time, pull=False):
 
-    config = get_looker_config(conn)
-    clean = clean_looker_config(config)
-
-    return clean
-
-def log_looker_config_file(conn, pull=False):
-
-    prepped = get_clean_looker_config(conn)
-
-    if not pull:
-        if not os.path.exists('logs'):
-            os.makedirs('logs')
-        directory = 'logs/{}/'.format(datetime.now().strftime("%Y%m%d-%H%M%S"))
+    if not os.path.exists('logs'):
+        os.makedirs('logs')
+    directory = 'logs/{}'.format(run_time.strftime("%Y%m%d-%H%M%S"))
+    if not os.path.exists(directory):
         os.makedirs(directory)
-    else:
-        directory = ''
 
-    for key in prepped.keys():
+    for key in config.keys():
 
-        with open('{}{}.yml'.format(directory,key),'w') as yaml_file:
-            yaml.dump({key: prepped[key]}, yaml_file, default_flow_style=False, Dumper=Dumper)
+        with open('{}/{}.yml'.format(directory,key),'w') as outfile:
+            yaml.dump({key: config[key]}, outfile, default_flow_style=False, Dumper=Dumper)
+
+    if pull:
+
+        for key in config.keys():
+
+            with open('{}.yml'.format(key),'w') as outfile:
+                yaml.dump({key: config[key]}, outfile, default_flow_style=False, Dumper=Dumper)
+
+
+def log_raw_looker_config_file(conn, config, run_time):
+    
+    if not os.path.exists('logs'):
+        os.makedirs('logs')
+    directory = 'logs/{}'.format(run_time.strftime("%Y%m%d-%H%M%S"))
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    with open('{}/config.json'.format(directory), 'w') as outfile:
+        json.dump(config, outfile)
+
+
+
 
 
 
