@@ -47,12 +47,12 @@ class LookerConnection:
             url=compose_url(self.url, endpoint, endpointid=endpointid, subendpoint=subendpoint, subendpointid=None),
             headers=self.headers)
 
-        if r.ok:
-            return r.json()
-        else:
-            raise Exception('Delete request unsuccessful, url: {}')
+        # if r.ok:
+        #     return r.json()
+        # else:
+        #     raise Exception('Delete request unsuccessful, url: {}')
 
-    def _patch(self, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
+    def _patch(self, payload, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
 
         r = requests.patch(
             url=compose_url(self.url, endpoint, endpointid=endpointid, subendpoint=subendpoint, subendpointid=None),
@@ -64,7 +64,7 @@ class LookerConnection:
         else:
             raise Exception('Patch request unsuccessful, url: {}')
 
-    def _post(self, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
+    def _post(self, payload, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
 
         r = requests.post(
             url=compose_url(self.url, endpoint, endpointid=endpointid, subendpoint=subendpoint, subendpointid=None),
@@ -159,4 +159,44 @@ class LookerConnection:
         keys = ['id','email']
 
         return filter_list(response, keys)
+
+    def create_permission_set(self, name, permissions):
+
+        self._post(
+                payload={'name': name, 'permissions': permissions},
+                endpoint='permission_sets'
+            )
+
+    def update_permission_set(self, object_id, name, permissions):
+
+        self._patch(
+                payload={'name': name, 'permissions': permissions},
+                endpoint='permission_sets',
+                endpointid=object_id
+            )
+
+    def delete_permission_set(self, object_id):
+
+        self._delete(endpoint='permission_sets',endpointid=object_id)
+
+    def create_model_set(self, name, models):
+
+        self._post(
+                payload={'name': name, 'models': models},
+                endpoint='model_sets'
+            )
+
+    def update_model_set(self, object_id, name, models):
+
+        self._patch(
+                payload={'name': name, 'models': models},
+                endpoint='model_sets',
+                endpointid=object_id
+            )
+
+    def delete_model_set(self, object_id):
+
+        self._delete(endpoint='model_sets',endpointid=object_id)
+
+
 

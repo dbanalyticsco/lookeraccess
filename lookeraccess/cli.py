@@ -5,6 +5,7 @@ from lookeraccess.parser import log_looker_config_file, log_raw_looker_config_fi
 from lookeraccess.loader import load_config_files
 from lookeraccess.validator import validate_config
 from lookeraccess.comparer import find_changes
+from lookeraccess.runner import implement_changes
 from datetime import datetime
 
 @click.group()
@@ -90,6 +91,8 @@ def run(base_url, client_id, client_secret, uselog, port):
 	looker_config = clean_looker_config(looker_config_raw)
 	log_looker_config_file(conn, looker_config, run_time)
 	changes = find_changes(looker_config, new_config)
+	looker_config_raw = load_looker_config_from_logs()
+	implement_changes(conn, looker_config_raw, new_config, changes)
 
 cli.add_command(connect)
 cli.add_command(pull)
