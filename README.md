@@ -2,8 +2,6 @@
 
 ## Installation 
 
-*N.B.*: Once setuptools is implemented, installation should be done via `pip`.
-
 To 'install' `lookeraccess`, you need clone the repo and install the required packages. It is best to use a virtual environment to install the packages.
 
 ```shell
@@ -11,7 +9,7 @@ git clone git@github.com:dbanalyticsco/lookeraccess.git
 cd lookeraccess
 virtualenv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -e .
 ```
 
 ## Setup
@@ -24,14 +22,12 @@ The `LOOKER_CLIENT_ID` and `LOOKER_CLIENT_SECRET` are the API credentials of the
 
 ## Running lookeraccess
 
-*N.B.*: Until we implement setuptools for the project, the project will get run as a python script through the entrypoint `lookeraccess/runner.py`.
-
 ### Command: connect
 
 To check if your credentials are setup correctly, run the `connect` command. From the projects root folder, run:
 
 ```shell
-python lookeraccess/runner.py connect
+lookeraccess connect
 ```
 
 ### Command: pull
@@ -41,7 +37,7 @@ To pull your current Looker configuration, run the `pull` command. It will gener
 The standard, non-editable objects will not be present in your files. i.e. The permission set 'Admin', the model set 'All' and the group 'All Users' will be missing.
 
 ```shell
-python lookeraccess/runner.py pull
+lookeraccess pull
 ```
 
 ### Command: validate
@@ -51,13 +47,36 @@ After you make changes to your config files that you pulled above, you can valid
 If the command runs without raising an Exception, your files are good:
 
 ```shell
-python lookeraccess/runner.py validate
+lookeraccess validate
 ```
 
 ### Command: changes
 
-TODO: implement changes command to verify changes that will occur from `run` command.
+To see the changes that `lookeraccess` will implement, run the `changes` command. It will pull the current config (`pull`) and identiy all the groups, roles, model sets and permission sets that needs to be either created, deleted or updated.
+
+```shell
+lookeraccess changes
+```
 
 ### Command: run
 
-TODO: implement run command that push your file config to your Looker instance.
+To push changes back to Looker, use the `run` command. It will effectively run `connect`, `pull`, `validate` before pushing the changes to Looker.
+
+```shell
+lookeraccess run
+```
+
+## Options
+
+### --port
+
+`lookeraccess` defaults to assume you use the port 19999. If that is not the case, use the `--port` option to set the port you would like to use.
+
+```shell
+lookeraccess changes --port 432
+```
+
+### --uselog
+
+
+
