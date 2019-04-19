@@ -63,6 +63,7 @@ def changes(base_url, client_id, client_secret, uselog, port):
 	run_time = datetime.now()
 	conn = LookerConnection(client_id, client_secret, base_url, port)
 	new_config = load_config_files()
+	validate_config(new_config, conn)
 	if uselog:
 		looker_config_raw = load_looker_config_from_logs()
 	else:

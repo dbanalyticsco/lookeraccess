@@ -39,18 +39,13 @@ class LookerConnection:
         if r.ok:
             return r.json()
         else:
-            raise Exception('Get request unsuccessful, url: {}')
+            raise Exception('Get request unsuccessful, url: {}'.format(r.url))
 
     def _delete(self, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
 
         r = requests.delete(
             url=compose_url(self.url, endpoint, endpointid=endpointid, subendpoint=subendpoint, subendpointid=None),
             headers=self.headers)
-
-        # if r.ok:
-        #     return r.json()
-        # else:
-        #     raise Exception('Delete request unsuccessful, url: {}')
 
     def _patch(self, payload, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
 
@@ -62,7 +57,7 @@ class LookerConnection:
         if r.ok:
             return r.json()
         else:
-            raise Exception('Patch request unsuccessful, url: {}')
+            raise Exception('Patch request unsuccessful, url: {}'.format(r.url))
 
     def _post(self, payload, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
 
@@ -74,7 +69,7 @@ class LookerConnection:
         if r.ok:
             return r.json()
         else:
-            raise Exception('Post request unsuccessful, url: {}')
+            raise Exception('Post request unsuccessful, url: {}'.format(r.url))
 
     def get_model_sets(self):
 
@@ -197,6 +192,26 @@ class LookerConnection:
     def delete_model_set(self, object_id):
 
         self._delete(endpoint='model_sets',endpointid=object_id)
+
+    def create_group(self, name):
+
+        self._post(
+                payload={'name': name},
+                endpoint='groups'
+            )
+
+    def add_group_to_group(self, group_id, sub_group_id):
+
+        self._post(
+                payload={'group_id': sub_group_id},
+                endpoint='groups',
+                endpointid=group_id,
+                subendpoint='groups'
+            )
+
+    def delete_group(self, object_id):
+
+        self._delete(endpoint='groups',endpointid=object_id)
 
 
 

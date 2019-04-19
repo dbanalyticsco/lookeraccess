@@ -1,4 +1,6 @@
 from schema import Schema, And, Use, Optional
+from utils import generate_groups_dag
+
 
 def check_keys(config):
 
@@ -85,6 +87,8 @@ def check_groups_groups(config, conn):
 			for subgroup in group['groups']:
 				if subgroup not in group_names:
 					raise Exception('Subgroup {} in group {} is not defined as a group in your configuration.'.format(subgroup, group['name']))
+
+	dag = generate_groups_dag(config['groups'])
 
 def check_roles_groups(config, conn):
 

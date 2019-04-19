@@ -1,4 +1,5 @@
 import yaml
+import networkx as nx
 
 def compose_url(urlbase, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
     """
@@ -39,3 +40,26 @@ def read_yaml_file_from_path(self, path):
             return config
         except yaml.YAMLError as exc:
             print(exc)
+
+def generate_groups_dag(config):
+
+    G = nx.DiGraph()
+    for group in config:
+        
+        if group['name'] not in G:
+            G.add_node(group['name'])
+
+        if 'groups' in group:
+            for subgroup in group['groups']:
+                if subgroup not in G:  
+                    G.add_node(subgroup)
+                G.add_edge(subgroup, group['name'])
+
+    try:
+        for node in nx.topological_sort(G):
+            pass
+    except nx.exception.NetworkXUnfeasible:
+        print("Your groups can't be members of each other.")
+        raise Exception("Two groups can't be members of each other.")
+        
+    return G

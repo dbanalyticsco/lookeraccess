@@ -1,4 +1,5 @@
-
+from utils import generate_groups_dag
+import networkx as nx
 
 def change_permission_sets(conn, looker_config, new_config, changes):
 
@@ -30,7 +31,33 @@ def change_model_sets(conn, looker_config, new_config, changes):
 		item_to_update = next((e for e in new_config if e['name'] == item))
 		conn.update_model_set(update_item_id, item_to_update['name'], item_to_update['models'])
 
+def change_groups(conn, looker_config, new_config, changes):
+
+	for item in changes['delete']:
+		item_id = next((e for e in looker_config if e['name'] == item))['id']
+		conn.delete_group(item_id)
+
+	dag = generate_groups_dag(new_config)
+
+	for item in nx.topological_sort(dag):
+
+		if item in changes['create']:
+			item_to_create = next((e for e in new_config if e['name'] == item))
+			conn.create_group(item_to_create['name'])
+
+			if 'groups' in item_to_create:
+				for subitem in item_to_create['groups']:
+					groups = conn.get_groups()
+					subitem_id = next((e for e in groups if e['name'] == subitem))['id']
+					created_item_id = next((e for e in groups if e['name'] == item))['id']
+					conn.add_group_to_group(created_item_id, subitem_id)
+
+
+
+
+
 def implement_changes(conn, looker_config, new_config, changes):
 	
 	change_permission_sets(conn, looker_config['permission_sets'], new_config['permission_sets'], changes['permission_sets'])
 	change_model_sets(conn, looker_config['model_sets'], new_config['model_sets'], changes['model_sets'])
+	change_groups(conn, looker_config['groups'], new_config['groups'], changes['groups'])

@@ -2,7 +2,7 @@
 
 ## Installation 
 
-To 'install' `lookeraccess`, you need clone the repo and install the required packages. It is best to use a virtual environment to install the packages.
+To install `lookeraccess`, you need clone the repo and install the required packages. It is best to use a virtual environment to install the packages.
 
 ```shell
 git clone git@github.com:dbanalyticsco/lookeraccess.git
