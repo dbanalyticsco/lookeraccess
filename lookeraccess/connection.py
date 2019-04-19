@@ -33,7 +33,7 @@ class LookerConnection:
     def _get(self, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
         
         r = requests.get(
-            url=compose_url(self.url, endpoint, endpointid=endpointid, subendpoint=subendpoint, subendpointid=None),
+            url=compose_url(self.url, endpoint, endpointid=endpointid, subendpoint=subendpoint, subendpointid=subendpointid),
             headers=self.headers)
 
         if r.ok:
@@ -44,13 +44,13 @@ class LookerConnection:
     def _delete(self, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
 
         r = requests.delete(
-            url=compose_url(self.url, endpoint, endpointid=endpointid, subendpoint=subendpoint, subendpointid=None),
+            url=compose_url(self.url, endpoint, endpointid=endpointid, subendpoint=subendpoint, subendpointid=subendpointid),
             headers=self.headers)
 
     def _patch(self, payload, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
 
         r = requests.patch(
-            url=compose_url(self.url, endpoint, endpointid=endpointid, subendpoint=subendpoint, subendpointid=None),
+            url=compose_url(self.url, endpoint, endpointid=endpointid, subendpoint=subendpoint, subendpointid=subendpointid),
             headers=self.headers,
             json=payload)
 
@@ -62,7 +62,7 @@ class LookerConnection:
     def _post(self, payload, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
 
         r = requests.post(
-            url=compose_url(self.url, endpoint, endpointid=endpointid, subendpoint=subendpoint, subendpointid=None),
+            url=compose_url(self.url, endpoint, endpointid=endpointid, subendpoint=subendpoint, subendpointid=subendpointid),
             headers=self.headers,
             json=payload)
 
@@ -102,7 +102,7 @@ class LookerConnection:
     def get_all_users(self):
 
         response = self._get('users')
-        keys = ['email']
+        keys = ['id','email']
 
         return filter_list(response, keys)
 
@@ -207,6 +207,34 @@ class LookerConnection:
                 endpoint='groups',
                 endpointid=group_id,
                 subendpoint='groups'
+            )
+
+
+    def add_user_to_group(self, group_id, user_id):
+
+        self._post(
+                payload={'user_id': user_id},
+                endpoint='groups',
+                endpointid=group_id,
+                subendpoint='users'
+            )
+
+    def remove_group_from_group(self, group_id, sub_group_id):
+
+        self._delete(
+                endpoint='groups',
+                endpointid=group_id,
+                subendpoint='groups',
+                subendpointid=sub_group_id
+            )
+
+    def remove_user_from_group(self, group_id, user_id):
+
+        self._delete(
+                endpoint='groups',
+                endpointid=group_id,
+                subendpoint='users',
+                subendpointid=user_id
             )
 
     def delete_group(self, object_id):

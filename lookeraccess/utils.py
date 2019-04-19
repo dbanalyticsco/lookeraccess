@@ -19,7 +19,7 @@ def compose_url(urlbase, endpoint, endpointid=None, subendpoint=None, subendpoin
             url += '/' + subendpoint
 
             if subendpointid:
-                url += '/' + subendpointid
+                url += '/' + str(subendpointid)
 
     return url
 

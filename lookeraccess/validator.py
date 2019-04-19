@@ -1,5 +1,5 @@
 from schema import Schema, And, Use, Optional
-from utils import generate_groups_dag
+from lookeraccess.utils import generate_groups_dag
 
 
 def check_keys(config):

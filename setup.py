@@ -13,7 +13,8 @@ setup(
         'pytest==4.4.0',
         'coverage==4.5.3',
         'schema==0.7.0',
-        'setuptools==41.0.0'
+        'setuptools==41.0.0',
+        'networkx==2.2'
     ],
     entry_points='''
         [console_scripts]
