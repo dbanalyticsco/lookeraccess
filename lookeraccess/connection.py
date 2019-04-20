@@ -59,6 +59,18 @@ class LookerConnection:
         else:
             raise Exception('Patch request unsuccessful, url: {}'.format(r.url))
 
+    def _put(self, payload, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
+
+        r = requests.put(
+            url=compose_url(self.url, endpoint, endpointid=endpointid, subendpoint=subendpoint, subendpointid=subendpointid),
+            headers=self.headers,
+            json=payload)
+
+        if r.ok:
+            return r.json()
+        else:
+            raise Exception('Put request unsuccessful, url: {}'.format(r.url))
+
     def _post(self, payload, endpoint, endpointid=None, subendpoint=None, subendpointid=None):
 
         r = requests.post(
@@ -155,6 +167,9 @@ class LookerConnection:
 
         return filter_list(response, keys)
 
+
+
+
     def create_permission_set(self, name, permissions):
 
         self._post(
@@ -195,10 +210,12 @@ class LookerConnection:
 
     def create_group(self, name):
 
-        self._post(
+        r = self._post(
                 payload={'name': name},
                 endpoint='groups'
             )
+
+        return r
 
     def add_group_to_group(self, group_id, sub_group_id):
 
@@ -240,6 +257,56 @@ class LookerConnection:
     def delete_group(self, object_id):
 
         self._delete(endpoint='groups',endpointid=object_id)
+
+    def delete_role(self, object_id):
+
+        self._delete(endpoint='roles',endpointid=object_id)
+
+    def create_role(self, name, permission_set_id, model_set_id):
+
+        r = self._post(
+                payload={
+                    'name': name,
+                    'permission_set_id': permission_set_id,
+                    'model_set_id': model_set_id
+                },
+                endpoint='roles'
+            )
+
+        return r
+
+    def update_role(self, object_id, name, permission_set_id, model_set_id):
+
+        r = self._patch(
+                payload={
+                    'name': name,
+                    'permission_set_id': permission_set_id,
+                    'model_set_id': model_set_id
+                },
+                endpoint='roles',
+                endpointid=object_id
+            )
+
+        return r
+
+    def update_role_groups(self, object_id, groups):
+        
+        self._put(
+                payload=groups,
+                endpoint='roles',
+                endpointid=object_id,
+                subendpoint='groups'
+            )
+
+    def update_role_users(self, object_id, users):
+        
+        self._put(
+                payload=users,
+                endpoint='roles',
+                endpointid=object_id,
+                subendpoint='users'
+            )
+
 
 
 
